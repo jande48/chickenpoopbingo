@@ -20,17 +20,31 @@ posts = [
     }
 ]
 
+@app.route("/test", methods=['GET','POST'])
+def test():
+    # clicked = None
+    if request.method == "POST":
+        req_data = request.form['myData']
+        print(req_data)
+        #title = req_data['title']
+        #body = req_data['body']
+        # clicked=request.get_json(silent=True)
+        # title = request.form.get('title')
+        # body = request.form.get('body')
+        # flash('it worked!!!', 'success')
+        #return '<div class="alert alert-success" role="alert">Your Card Has Been Saved</div>'
+    return render_template('test.html')
 
 @app.route("/")
 @app.route("/home", methods=['GET','POST'])
 def home():
     if current_user.is_authenticated:
         minus_credits = 0
-        for i in range( len(current_user.card.data) ):
-            minus_credits += int(current_user.card.data[i])
-        current_user.credits.data = int(current_user.credits.data)-minus_credits
-        db.session.commit()
-        flash('Your Card Has Been Saved! Tune in For the Next Chicken Shitting.', 'success')
+        # for i in range( len(current_user.card.data) ):
+        #     minus_credits += int(current_user.card.data[i])
+        # current_user.credits.data = int(current_user.credits.data)-minus_credits
+        # db.session.commit()
+        # flash('Your Card Has Been Saved! Tune in For the Next Chicken Shitting.', 'success')
     else:
         flash('Please Sign In to Save a Card!', 'info')
     return render_template('home.html')
