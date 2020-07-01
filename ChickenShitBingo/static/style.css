@@ -1,3 +1,4 @@
+  
 body { 
     text-align: center;
     font-family: Verdana, sans-serif; 
@@ -13,25 +14,27 @@ a:hover { color: #ffb219; }
 a, a:hover { text-decoration: none; }
 
 th, td {
-    border: 2.5px solid black;
+    border: 2.5px solid #4b555b;
     text-align: center;
+    border-radius: 10px;
 }
 
 .square {
-    font-size: 20px;
+    font-size: 22px;
 	background-color:#ffffff;
-	width: 100%;
-	padding: 20px;
-	border: none;
+    width: 8vw;
+    height: 8vw;
+	padding: 2px;
+    border: none;
+    border-radius: 10px;
 }
 
 #bingo-card {
     margin: 0 auto;
     text-align: center;
-    width: 2em;
-    height: 2em;
+    border-radius: 10px;
     border-collapse: collapse;
-    background: #d3d3d3;
+    background: #4b555b;
 }
 
 .header {
@@ -39,7 +42,9 @@ th, td {
     font-size: 20px;
 }
 
-#sq12 { background: lightblue; }
+#sq12 { background: lightblue; 
+        font-size: 20px;
+    }
 
 #goals, #actions { 
     color: #ffffff; 
@@ -60,13 +65,18 @@ th, td {
     transition-duration: 0.4s;
     cursor: pointer;
     width: 100px;
+    border-radius: 10px;
 }
 
 .button:hover {
     background-color: #4286f4; 
     color: #ffffff;
+    border-radius: 10px;
 }
 
-.square { cursor: pointer; }
+.square { cursor: pointer;
+    border-radius: 10px;
+ }
 
-button:focus { outline:0; }
+button:focus { outline:white;
+    border-radius: 10x; }
