@@ -15,8 +15,8 @@ class User(db.Model, UserMixin):
     image_file = db.Column(db.String(20), nullable=False, default='default.jpg')
     password = db.Column(db.String(60), nullable=False)
     posts = db.relationship('Post', backref='author', lazy=True)
-    # credits = db.Column(db.String(25), nullable=False, default='10')
-    # card = db.Column(db.String(25), nullable=False, default='0000000000000000000000000')
+    credits = db.Column(db.String(25), nullable=False, default='5')
+    card = db.Column(db.String(167), nullable=False, default='{"0":0,"1":0,"2":0,"3":0,"4":0,"5":0,"6":0,"7":0,"8":0,"9":0,"10":0,"11":0,"12":0,"13":0,"14":0,"15":0,"16":0,"17":0,"18":0,"19":0,"20":0,"21":0,"22":0,"23":0,"24":0}')
 
     def get_reset_token(self, expires_sec=1800):
         s = Serializer(app.config['SECRET_KEY'], expires_sec)

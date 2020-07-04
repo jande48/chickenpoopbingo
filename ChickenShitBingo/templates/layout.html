@@ -6,11 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
     <!-- Bootstrap CSS -->
-    <!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='main.css') }}"> -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-    <link rel="stylesheet" href="static/main.css">
+    <!-- <link rel="stylesheet" href="static/main.css"> -->
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='main.css') }}">
     <link rel="stylesheet" href="../static/style.css">
     <script src="../static/bingo.js"></script>
@@ -40,7 +37,20 @@
             <!-- Navbar Right Side -->
             <div class="navbar-nav">
               {% if current_user.is_authenticated %}
-                <a class="nav-item nav-link" href="#">Credits: {{ current_user.credits }}</a>
+                <!-- <script>
+                  $(document).ready(function(){
+                    var cardToLoad = JSON.parse( {{ current_user.card | tojson }} );
+                    console.log(cardToLoad)
+                    for (var i = 0; i < 25; i++) {
+                      var currentSquare = document.getElementById("sq" + i);
+                      if (cardToLoad[i] == 0) 
+                        currentSquare.style.backgroundColor = "#ffffff";
+                      else
+                        currentSquare.style.backgroundColor = "lightblue";
+                    };
+                  };
+                </script> -->
+                <a class="nav-item nav-link" href="#">Credits: </a><a class="nav-item nav-link" href="#" id="credits">{{ current_user.credits }}</a>
                 <a class="nav-item nav-link" href="{{ url_for('account') }}">Account</a>
                 <a class="nav-item nav-link" href="{{ url_for('logout') }}">Logout</a>
               {% else %}
@@ -59,7 +69,7 @@
           {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}
               {% for category, message in messages %}
-                <div class="alert alert-{{ category }}">
+                <div class="alert alert-{{ category }}" id="message-div2">
                   {{ message }}
                 </div>
               {% endfor %}
@@ -83,74 +93,54 @@
       </div>
     </main>
 
-
-    <!-- Optional JavaScript -->
-    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-    <!-- <script>
-      $(document).ready(function(){
-        var clicked;
-        $("#saveButton").click(function(){
-          //clicked = $(this).attr("name");
-          $ajax({
-            type: 'POST',
-            url: "{{ url_for('test') }}",
-            contentType: 'application/json;charset=UTF-8',
-            data: [{'sq1': 1},{'sq2': 0}]
-          })
-        })
-      })
-    </script> -->
-    <!-- <script
-  src="https://code.jquery.com/jquery-3.4.1.min.js"
-  integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
-  crossorigin="anonymous"></script> -->
-
-    <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
-    <script type=text/javascript>
-        $(document).ready(function(){
-            $("#saveCard").click(function(){
-                var myData = "This is my data."
-                $.post("/test",{"myData": myData})
-                $("#message-div").append("<div class='alert alert-success'>Your Card Has Been Saved! Check Upcoming Events!</div>")
-            })
-        });  
-    </script>
-
-<!-- 
-    <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
-    <script type=text/javascript>
-    $(document).ready(function(){
-      function saveCard() {
-        var myData = "This is my data."
-        //$.post("/test",{"myData": myData})
-        $('div.message-div').replaceWith('<div class="alert alert-success">Your Card Has Been Saved!</div>')
-      };
-    });  
-      
-      // $(document).ready(function(){
-      //   $('#postForm').submit(function(){
-      //     //e.preventDefault();
-      //     // $.ajax({
-      //     //   type: 'POST',
-      //     //   url: $SCRIPT_ROOT + '/test',// "{{ url_for('test') }}",
-      //     //   contentType: 'application/json;charset=UTF-8',
-      //     //   data: {title: 'Title', body: 'Body'}
-      //     // });
-      //     $.post("{{ url_for('test') }}", {title: 'Title', body: 'Body'}).done(
-      //       function(data){
-      //         console.log('Post Saved');
-      //         console.log(data);
-      //       }
-      //     )
-      //   })
-      // })
-
-    </script>
-     -->
+    
     <!-- <script type=text/javascript>
-      $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
+        $(document).ready(function(){
+            {% if current_user.is_authenticated %}
+                loadTheCardDifferent({{ current_user.card|tojson }})
+            {% endif %}
+            $(".square").click(function(){
+                if ($(this).attr('id') != "sq12" && $(this).css('backgroundColor') == "rgb(173, 216, 230)") var newCredits = parseInt($("#credits").text())+1;
+                  //console.log(newCredits)
+                
+                if ($(this).attr('id') != "sq12" && $(this).css('backgroundColor') == "rgb(255, 255, 255)" && parseInt($("#credits").text()) > 0) var newCredits = parseInt($("#credits").text())-1;
+                  //console.log(newCredits)
+                
+                $("#credits").text(newCredits);
+                if ($(this).attr('id') != "sq12" && parseInt($("#credits").text()) > 0) markSquare($(this).attr('id'));
+            })
+            $("#saveCard").click(function(){
+                var myData = makeCard()
+                
+                $.post("/test",{"myData": myData})
+                $("#message-div").empty()
+                $("#message-div2").remove()
+                $("#message-div").append("<div class='alert alert-success'>Your Card Has Been Saved! Check Upcoming Events!</div>")
+                // $.get("/getCredits", function(data) {
+                //   console.log(data)
+                //   $("#credits").text(data)
+                //   // $("#credits").empty()
+                //   // $("#credits").append(data)
+                // })
+            })
+            $("#pleaseLogin").click(function(){
+                $("#message-div").empty()
+                $("#message-div2").remove()
+                $("#message-div").append("<div class='alert alert-info'>Please Login to Play!</div>")
+            })
+          
+        });  
     </script> -->
-    <!-- <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script> -->
+    {% if current_user.is_authenticated %}
+      <script>
+        loadTheSavedCard({{ current_user.card|tojson }})
+      </script>
+    {% endif %}
+    
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+    <script src="../static/jQuery.js"></script>
+    
+    <!-- <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script> -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
     

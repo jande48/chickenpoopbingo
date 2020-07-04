@@ -1,31 +1,34 @@
-from flask import render_template, url_for, flash, redirect, request
+from flask import render_template, url_for, flash, redirect, request, jsonify
 from ChickenShitBingo import app, db, bcrypt, mail
 from ChickenShitBingo.forms import RegistrationForm, LoginForm, RequestResetForm, ResetPasswordForm
 from ChickenShitBingo.models import User, Post
 from flask_login import login_user, current_user, logout_user, login_required
 from flask_mail import Message
+import json
 
-posts = [
-    {
-        'author': 'Corey Schafer',
-        'title': 'Blog Post 1',
-        'content': 'First post content',
-        'date_posted': 'April 20, 2018'
-    },
-    {
-        'author': 'Jane Doe',
-        'title': 'Blog Post 2',
-        'content': 'Second post content',
-        'date_posted': 'April 21, 2018'
-    }
-]
+# posts = [
+#     {
+#         'author': 'Corey Schafer',
+#         'title': 'Blog Post 1',
+#         'content': 'First post content',
+#         'date_posted': 'April 20, 2018'
+#     },
+#     {
+#         'author': 'Jane Doe',
+#         'title': 'Blog Post 2',
+#         'content': 'Second post content',
+#         'date_posted': 'April 21, 2018'
+#     }
+# ]
 
-@app.route("/test", methods=['GET','POST'])
-def test():
-    # clicked = None
-    if request.method == "POST":
-        req_data = request.form['myData']
-        print(req_data)
+# @app.route("/getCredits", methods=['GET'])
+# def getCredits():
+#     if current_user.is_authenticated:
+#             res = current_user.credits
+#             print(res)
+#             return res
+
+        #print(card["1"])
         #title = req_data['title']
         #body = req_data['body']
         # clicked=request.get_json(silent=True)
@@ -33,20 +36,60 @@ def test():
         # body = request.form.get('body')
         # flash('it worked!!!', 'success')
         #return '<div class="alert alert-success" role="alert">Your Card Has Been Saved</div>'
-    return render_template('test.html')
+    # return render_template('home.html')
+
+@app.route("/saveCard", methods=['GET','POST'])
+def saveCard():
+    # clicked = None
+    if request.method == "POST":
+        if current_user.is_authenticated:
+            req_data = request.form['myData']
+            #print(req_data)
+            card = json.loads(req_data)
+            minusCreditsNew = 0
+            for i in range(25):
+                if card[str(i)]==1:
+                    minusCreditsNew+=1
+            previousCard = json.loads(current_user.card)
+            minusCreditsOld = 0
+            for i in range(25):
+                if previousCard[str(i)]==1:
+                    minusCreditsOld+=1
+            
+            current_user.credits = str(int(current_user.credits)-(minusCreditsNew-minusCreditsOld))
+            current_user.card = req_data
+            #print(current_user.card)
+            #print(type(current_user.card))
+            db.session.commit()
+        else:
+            flash('Please Sign In to Save a Card!', 'info')
+    
+    if request.method == "GET":
+        if current_user.is_authenticated:
+            res = current_user.credits
+            return res
+        #print(card["1"])
+        #title = req_data['title']
+        #body = req_data['body']
+        # clicked=request.get_json(silent=True)
+        # title = request.form.get('title')
+        # body = request.form.get('body')
+        # flash('it worked!!!', 'success')
+        #return '<div class="alert alert-success" role="alert">Your Card Has Been Saved</div>'
+    return render_template('home.html')
 
 @app.route("/")
 @app.route("/home", methods=['GET','POST'])
 def home():
-    if current_user.is_authenticated:
-        minus_credits = 0
-        # for i in range( len(current_user.card.data) ):
-        #     minus_credits += int(current_user.card.data[i])
-        # current_user.credits.data = int(current_user.credits.data)-minus_credits
-        # db.session.commit()
-        # flash('Your Card Has Been Saved! Tune in For the Next Chicken Shitting.', 'success')
-    else:
-        flash('Please Sign In to Save a Card!', 'info')
+    # if current_user.is_authenticated:
+    #     minus_credits = 0
+    #     # for i in range( len(current_user.card.data) ):
+    #     #     minus_credits += int(current_user.card.data[i])
+    #     # current_user.credits.data = int(current_user.credits.data)-minus_credits
+    #     # db.session.commit()
+    #     # flash('Your Card Has Been Saved! Tune in For the Next Chicken Shitting.', 'success')
+    # else:
+    #     flash('Please Sign In to Save a Card!', 'info')
     return render_template('home.html')
 
 
