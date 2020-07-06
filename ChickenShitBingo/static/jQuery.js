@@ -3,6 +3,7 @@ $(document).ready(function(){
     // {% if current_user.is_authenticated %}
     //     loadTheCardDifferent({{ current_user.card|tojson }})
     // {% endif %}
+    $("#sq12").css('background-color', 'lightblue');
     $(".square").click(function(){
         if ($(this).attr('id') != "sq12" && $(this).css('backgroundColor') == "rgb(173, 216, 230)") var newCredits = parseInt($("#credits").text())+1;
           //console.log(newCredits)
